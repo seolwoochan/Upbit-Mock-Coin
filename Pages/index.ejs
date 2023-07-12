@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable.css" />
+    <link rel="stylesheet" href="/Style/index.css">
+    <script src="https://cdn.socket.io/socket.io-3.0.1.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>모의 주식 업비트</title>
+</head>
+
+<body>
+    <div class="container">
+
+    <div class="markets">
+        <table>
+
+            <th>주식명</th>
+            <th style="cursor: pointer;" onclick="listSort('price')">현재가</th>
+            <th style="cursor: pointer;" onclick="listSort('change')">전일대비</th>
+            <th style="cursor: pointer;" onclick="listSort('24h')">거래대금</th>
+
+            <% for (var i=0; i < data.length; i++) { %>
+                <tr onclick="funcs.chart_init_click('<%= data[i].market %>', '<%= data[i].marketKorean %>', this, true)" data-price="<%= data[i].price %>" data-change="<%= (data[i].change_rate * 100) %>"
+                    data-24h="<%= data[i].acc_trade_price_24h.toFixed(0) %>"
+                    class="<%= data[i].market.split('-')[1] %> <%= data[i].change == '▼' ? 'down' : data[i].change == '▲' ? 'up' : 'keep' %>
+                    <%= data[i].market.split('-')[1] == 'BTC' ? 'focus' : ''%>">
+                    <td style="color: #222;">
+                        <span>
+                            <%= data[i].marketKorean %>
+                        </span>
+                        <span>
+                            <%= data[i].market.split('-')[1] %>/<%= data[i].market.split('-')[0] %>
+                        </span>
+                    </td>
+                    <td style="text-align: right;margin-right: 5px;" class="<%= data[i].market.split('-')[1] %>-price">
+                        <%= data[i].price.toLocaleString() %>
+                    </td>
+                    <td style="text-align: right;margin-right: 5px;" class="<%= data[i].market.split('-')[1] %>-change">
+                        <span style="font-size: 12px;" class="<%= data[i].market.split('-')[1] %>-change-1">
+                            <%= data[i].change=='▼' ? '-' : data[i].change=='▲' ? '+' : '' %>
+                                <%= (data[i].change_rate * 100).toFixed(2) %>%
+                        </span>
+                        <span style="font-size: 11px;" class="<%= data[i].market.split('-')[1] %>-change-2">
+                            <%= data[i].change=='▼' ? '-' : data[i].change=='▲' ? '' : '' %>
+                                <%= data[i].change_price.toLocaleString() %>
+                        </span>
+                    </td>
+                    <td style="text-align: right;padding-right: 10px;"
+                        class="h <%= data[i].market.split('-')[1] %>-acc-trade-price-24h">
+                        <%= String(Number(data[i].acc_trade_price_24h.toFixed(0)).toLocaleString()).replace(',' +
+                            String(Number(data[i].acc_trade_price_24h.toFixed(0)).toLocaleString()).slice(-7), '' ) %>백만
+                    </td>
+                </tr>
+                <% } %>
+
+        </table>
+
+    </div>
+    <div class="frame">
+        <div id="chart"></div>
+        <div class="flex-center">
+            <h3 id="coin"></h3>
+            <button id="importCandle" onclick="funcs.chart_history()">캔들 불러오기</button>
+            <h4><span>한번 조회 시 200분</span><span class="separate">|</span><span>3초마다 갱신</span></h4>
+        </div>
+    </div>
+    </div>
+    <script src="/Script/index.js"></script>
+</body>
+
+</html>

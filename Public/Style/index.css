@@ -1,0 +1,137 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Pretendard Variable';
+    font-weight: 500;
+}
+
+html, body {
+    width: 100%;
+    background-color: #eee;
+}
+
+.container {
+    width: 1200px;
+    background-color: #fff;
+    position: relative;
+    display: flex;
+    padding: 0 10px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.frame {
+    flex: 2;
+    top: 0;
+    position: fixed;
+    margin-left: 480px;
+}
+
+.tv-lightweight-charts {
+    margin-top: 60px;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.frame h4 {
+    position: absolute;
+    right: 110px;
+}
+
+.up {
+    color: #c84a31;
+}
+.down {
+    color: #1261c4;
+}
+.keep {
+    color: #222;
+}
+
+.markets {
+    flex: 1;
+}
+
+.markets table {
+    width: 400px;
+    margin: 10px 0;
+    border-radius: 5px;
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+.focus {
+    outline: none;
+    box-shadow: 0 0 0 3px #cbd6ee;
+    transition-timing-function: ease;
+    transition-duration: .2s;
+}
+
+.separate {
+    color: #999;
+    margin: 0 5px;
+}
+
+.markets table th {
+    padding-bottom: 5px;
+    padding: 10px;
+    font-weight: 700;
+    position: sticky;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px #fff;
+    width: 100%;
+    top: 0;
+}
+
+.markets table tr:not(:first-child) {
+    cursor: pointer;
+}
+
+.markets table tr {
+    border-radius: 5px;
+}
+
+.markets table tr td {
+    background-color: rgb(242, 244, 246);
+    font-size: 12px;
+    height: 44px;
+    padding: 6px 0;
+    padding-left: 10px;
+}
+
+.h {
+    color: #666;
+}
+
+.markets table tr td:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.markets table tr td:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.markets table tr td:first-child {
+    min-width: 160px;
+    max-width: 160px;
+}
+.markets table tr td:not(:first-child) {
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.markets table tr td span {
+    display: block;
+}
+.markets table tr td:first-child span:last-child {
+    color: #666;
+}
