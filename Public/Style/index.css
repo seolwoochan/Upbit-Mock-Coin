@@ -41,9 +41,16 @@ body {
     justify-content: space-between;
 }
 
-.frame h4 {
+.frame .etc  {
     position: absolute;
-    right: 110px;
+    right: 90px;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+#coin {
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .up {
@@ -134,4 +141,18 @@ body {
 }
 .markets table tr td:first-child span:last-child {
     color: #666;
+}
+
+#importCandle {
+    right: 90px;
+    position: absolute;
+
+    padding: 8px 12px;
+    outline: none;
+    border: none;
+    background-color: #1261c4;
+    margin-top: 5px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 400;
 }

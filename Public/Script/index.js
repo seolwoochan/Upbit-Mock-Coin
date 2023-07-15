@@ -6,12 +6,12 @@ function listSort(kind) {
     /* Price */
     if (kind == obj.price) {
         $(".markets table").html(
-            orderByPrice ? $(".markets table tr").sort(function (a, b) {
+            !orderByPrice ? $(".markets table tr").sort(function (a, b) {
                 orderByPrice = true;
-                return $(b).data(dataNm) - $(a).data(dataNm);
+                return $(b).data(kind) - $(a).data(kind);
             }) : $(".markets table tr").sort(function (a, b) {
                 orderByPrice = false;
-                return $(a).data(dataNm) - $(b).data(dataNm);
+                return $(a).data(kind) - $(b).data(kind);
             })
         );
     }
@@ -19,12 +19,12 @@ function listSort(kind) {
     /* Change */
     if (kind == obj.change) {
         $(".markets table").html(
-            orderByPrice ? $(".markets table tr").sort(function (a, b) {
+            !orderByChange ? $(".markets table tr").sort(function (a, b) {
                 orderByChange = true;
-                return $(b).data(dataNm) - $(a).data(dataNm);
+                return $(b).data(kind) - $(a).data(kind);
             }) : $(".markets table tr").sort(function (a, b) {
                 orderByChange = false;
-                return $(a).data(dataNm) - $(b).data(dataNm);
+                return $(a).data(kind) - $(b).data(kind);
             })
         );
     }
@@ -32,12 +32,12 @@ function listSort(kind) {
     /* 24Hours */
     if (kind == obj.allday) {
         $(".markets table").html(
-            orderByPrice ? $(".markets table tr").sort(function (a, b) {
+            !orderBy24h ? $(".markets table tr").sort(function (a, b) {
                 orderBy24h = true;
-                return $(b).data(dataNm) - $(a).data(dataNm);
+                return $(b).data(kind) - $(a).data(kind);
             }) : $(".markets table tr").sort(function (a, b) {
                 orderBy24h = false;
-                return $(a).data(dataNm) - $(b).data(dataNm);
+                return $(a).data(kind) - $(b).data(kind);
             })
         );
     }
@@ -100,10 +100,23 @@ var funcs = {
     },
     chart_init_click: (var_code, var_code_kr, element, dd) => {
         code = var_code, code_kr = var_code_kr;
+        
         if (dd) {
             $("tr").removeClass("focus");
             $(element).addClass("focus");
         }
+
+        funcs.post("POST", "/api/market", {code}).then(res => {
+            var market_price_class = res[0].change == 'RISE' ? 'up' : res[0].change == 'EVEN' ? 'keep' : 'down';
+            var market_price_num1 = res[0].change == 'RISE' ? '+' : res[0].change == 'EVEN' ? '' : '-';
+            var market_price_num2 = res[0].change == 'RISE' ? '' : res[0].change == 'EVEN' ? '' : '-';
+            var market_price_num3 = res[0].change == 'RISE' ? '▲' : res[0].change == 'EVEN' ? '' : '▼';
+            funcs.removeAllClass($(".change"));
+            $(".pp").text(res[0].trade_price.toLocaleString());
+            $(".change").addClass(market_price_class);
+            $(".change").text(`${market_price_num1}${(res[0].change_rate * 100).toFixed(2)}% ${market_price_num3}${res[0].change_price.toLocaleString()}`);
+        });
+
         $("#coin").text(code_kr);
         funcs.post("POST", "/api/candles", { market: code }).then(res => {
             cdata = [];
@@ -151,6 +164,7 @@ socket.on('markets', function (data) {
         var market_price_class = data.change == 'RISE' ? 'up' : data.change == 'EVEN' ? 'keep' : 'down';
         var market_price_num1 = data.change == 'RISE' ? '+' : data.change == 'EVEN' ? '' : '-';
         var market_price_num2 = data.change == 'RISE' ? '' : data.change == 'EVEN' ? '' : '-';
+        var market_price_num3 = data.change == 'RISE' ? '▲' : data.change == 'EVEN' ? '' : '▼';
         var acc_trade_price_24h = String(Number(data.acc_trade_price_24h.toFixed(0)).toLocaleString()).replace(',' + String(Number(data.acc_trade_price_24h.toFixed(0)).toLocaleString()).slice(-7), '') + '백만';
         var target = $(`.${market_code}`);
         funcs.removeAllClass(target);
@@ -159,5 +173,11 @@ socket.on('markets', function (data) {
         $(`.${market_code}-change-1`).text(`${market_price_num1}${(data.change_rate * 100).toFixed(2)}%`);
         $(`.${market_code}-change-2`).text(`${market_price_num2}${data.change_price.toLocaleString()}`);
         $(`.${market_code}-acc-trade-price-24h`).text(acc_trade_price_24h);
+        if (data.code == code) {
+            funcs.removeAllClass($(".change"));
+            $(".pp").text(data.trade_price.toLocaleString());
+            $(".change").addClass(market_price_class);
+            $(".change").text(`${market_price_num1}${(data.change_rate * 100).toFixed(2)}% ${market_price_num3}${data.change_price.toLocaleString()}`);
+        }
     }
 });

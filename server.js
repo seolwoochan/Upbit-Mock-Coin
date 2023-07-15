@@ -156,6 +156,11 @@ ws.on('message', (data) => {
     catch (err) { console.log(err); }
 });
 
+app.post('/api/market', async (req, res) => {
+    var data = await upbit.getTicker(req.body.code);
+    return res.json(data);
+});
+
 app.post('/api/candles', async (req, res) => {
     var data = (await upbit.getCandles(req.body.market));
     return res.json(data);
