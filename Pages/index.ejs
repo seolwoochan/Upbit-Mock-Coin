@@ -30,10 +30,11 @@
                     class="<%= data[i].market.split('-')[1] %> <%= data[i].change == '▼' ? 'down' : data[i].change == '▲' ? 'up' : 'keep' %>
                     <%= data[i].market.split('-')[1] == 'BTC' ? 'focus' : ''%>">
                     <td style="color: #222;">
-                        <span>
+                        <img style="width: 30px; height: 30px;" src="https://static.upbit.com/logos/<%= data[i].market.split('-')[1] %>.png" alt="">
+                        <span style="font-weight: 700;font-size: 13px">
                             <%= data[i].marketKorean %>
                         </span>
-                        <span>
+                        <span style="font-size: 12px;">
                             <%= data[i].market.split('-')[1] %>/<%= data[i].market.split('-')[0] %>
                         </span>
                     </td>
@@ -62,11 +63,11 @@
     <div class="frame">
         <div id="chart"></div>
         <div class="flex-center">
-            <span style="margin-bottom: 5px;" id="coin"></span>
+            <span style="margin-bottom: 10px;" id="coin"></span>
             <span class="etc"><span>캔들 조회 시 200분</span><span class="separate">|</span><span>1초마다 자동 갱신</span></span>
         </div>
-        <span style="font-weight: 700; font-size: 16px;" class="pp"></span>
-        <span style="font-weight: 400; font-size: 14px;" class="change"></span>
+        <span style="font-weight: 700; font-size: 20px;" class="pp"></span><br>
+        <span style="font-weight: 400; font-size: 15px;" class="change"></span>
         <button id="importCandle" onclick="funcs.chart_history()">조회</button>
 
     </div>

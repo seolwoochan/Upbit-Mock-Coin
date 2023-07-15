@@ -51,6 +51,14 @@ body {
 #coin {
     font-size: 24px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+}
+
+#coin img {
+    width: 24px;
+    margin-right: 8px;
+    height: 24px;
 }
 
 .up {
@@ -128,8 +136,8 @@ body {
 }
 
 .markets table tr td:first-child {
-    min-width: 160px;
-    max-width: 160px;
+    min-width: 140px;
+    max-width: 140px;
 }
 .markets table tr td:not(:first-child) {
     min-width: 100px;
@@ -143,6 +151,11 @@ body {
     color: #666;
 }
 
+.sm {
+    margin-left: 5px;
+    font-size: 14px;
+}
+
 #importCandle {
     right: 90px;
     position: absolute;
@@ -151,7 +164,7 @@ body {
     outline: none;
     border: none;
     background-color: #1261c4;
-    margin-top: 5px;
+    margin-top: -15px;
     color: #fff;
     cursor: pointer;
     font-weight: 400;

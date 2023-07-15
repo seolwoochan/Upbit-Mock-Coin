@@ -44,21 +44,21 @@ function listSort(kind) {
 }
 
 /* Stock Settings */
-var code = "KRW-BTC", code_kr = "비트코인", once = false, candle, cdata = [], force = 0;
+var code = "KRW-BTC", code_kr = "비트코인", once = false, candle, chart, cdata = [], force = 0;
 var funcs = {
     removeAllClass: (obj) => {
         if (obj.hasClass("up")) {
-            obj.removeClass("down");
-            obj.removeClass("keep");
+            obj.removeClass("up");
         }
         else if (obj.hasClass("down")) {
-            obj.removeClass("up");
-            obj.removeClass("keep");
+            obj.removeClass("down");
         }
         else if (obj.hasClass("keep")) {
-            obj.removeClass("down");
-            obj.removeClass("up");
+            obj.removeClass("keep");
         }
+    },
+    logo: (code) => {
+        return `https://static.upbit.com/logos/${code}.png`;
     },
     unixToISO: (time) => {
         return Date.parse(time) / 1000;
@@ -88,7 +88,7 @@ var funcs = {
             width: 700, height: 400,
             timeScale: { visible: true, timeVisible: true, secondsVisible: false },
         };
-        const chart = LightweightCharts.createChart(chart_element, chart_properties);
+        chart = LightweightCharts.createChart(chart_element, chart_properties);
         candle = chart.addCandlestickSeries();
         candle.applyOptions({
             wickUpColor: 'rgb(225, 50, 85)',
@@ -109,15 +109,16 @@ var funcs = {
         funcs.post("POST", "/api/market", {code}).then(res => {
             var market_price_class = res[0].change == 'RISE' ? 'up' : res[0].change == 'EVEN' ? 'keep' : 'down';
             var market_price_num1 = res[0].change == 'RISE' ? '+' : res[0].change == 'EVEN' ? '' : '-';
-            var market_price_num2 = res[0].change == 'RISE' ? '' : res[0].change == 'EVEN' ? '' : '-';
             var market_price_num3 = res[0].change == 'RISE' ? '▲' : res[0].change == 'EVEN' ? '' : '▼';
+            funcs.removeAllClass($(".pp"));
             funcs.removeAllClass($(".change"));
-            $(".pp").text(res[0].trade_price.toLocaleString());
+            $(".pp").addClass(market_price_class);
             $(".change").addClass(market_price_class);
-            $(".change").text(`${market_price_num1}${(res[0].change_rate * 100).toFixed(2)}% ${market_price_num3}${res[0].change_price.toLocaleString()}`);
+            $(".pp").html(`${res[0].trade_price.toLocaleString()}<span class='sm'>KRW</span>`);
+            $(".change").text(`${market_price_num1}${(res[0].change_rate * 100).toFixed(2)}% ${market_price_num3} ${res[0].change_price.toLocaleString()}`);
         });
 
-        $("#coin").text(code_kr);
+        $("#coin").html(`<img src='${funcs.logo(code.split('-')[1])}'></img> ${code_kr}`);
         funcs.post("POST", "/api/candles", { market: code }).then(res => {
             cdata = [];
             res.forEach((data, idx) => {
@@ -130,7 +131,7 @@ var funcs = {
         });
     },
     chart_interval: () => {
-        $("#coin").text(code_kr);
+        $("#coin").html(`<img src='${funcs.logo(code.split('-')[1])}'></img> ${code_kr}`);
         funcs.post("POST", "/api/candles", { market: code }).then(res => {
             var filter = res.slice(res.findIndex(x => x.time == cdata[cdata.length - 1].time), res.length);
             filter.forEach((data, idx) => {
@@ -156,6 +157,20 @@ funcs.chart_init();
 funcs.chart_init_click(code, code_kr, this, false);
 setInterval(() => { funcs.chart_interval(code, code_kr) }, 1000);
 
+var islogic = false;
+chart.timeScale().subscribeVisibleLogicalRangeChange(onVisibleLogicalRangeChanged);
+function onVisibleLogicalRangeChanged(newVisibleLogicalRange) {
+    if (newVisibleLogicalRange.from < 0 && islogic == false) {
+        funcs.chart_history();
+        islogic = true;
+    }
+}
+document.getElementById("chart").addEventListener('mousedown', () => {
+    islogic = false;
+})
+
+
+
 /* Socket Settings */
 var socket = io.connect("/");
 socket.on('markets', function (data) {
@@ -174,10 +189,12 @@ socket.on('markets', function (data) {
         $(`.${market_code}-change-2`).text(`${market_price_num2}${data.change_price.toLocaleString()}`);
         $(`.${market_code}-acc-trade-price-24h`).text(acc_trade_price_24h);
         if (data.code == code) {
+            funcs.removeAllClass($(".pp"));
             funcs.removeAllClass($(".change"));
-            $(".pp").text(data.trade_price.toLocaleString());
+            $(".pp").addClass(market_price_class);
+            $(".pp").html(`${data.trade_price.toLocaleString()}<span class='sm'>KRW</span>`);
             $(".change").addClass(market_price_class);
-            $(".change").text(`${market_price_num1}${(data.change_rate * 100).toFixed(2)}% ${market_price_num3}${data.change_price.toLocaleString()}`);
+            $(".change").text(`${market_price_num1}${(data.change_rate * 100).toFixed(2)}% ${market_price_num3} ${data.change_price.toLocaleString()}`);
         }
     }
 });
